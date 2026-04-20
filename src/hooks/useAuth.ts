@@ -2,7 +2,8 @@ import { authService } from '@/src/services/auth/authService';
 import ZustandSession from '@/src/services/zustand/session';
 import { useEffect, useState } from 'react';
 
-export const useAuth = () => {
+// ✅ Renamed to avoid conflict with AuthContext useAuth hook
+export const useAuthService = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated());
   const [user, setUser] = useState(authService.getCurrentUser());
   const [isLoading, setIsLoading] = useState(true);

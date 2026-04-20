@@ -1,24 +1,9 @@
-import { authService } from '@/src/services/auth/authService';
+import { useAuth } from '@/src/contexts/AuthContext';
 import { Redirect } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function IndexScreen() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Check authentication with a small delay to ensure navigation is ready
-    const checkAuth = () => {
-      setTimeout(() => {
-        const authenticated = authService.isAuthenticated();
-        setIsAuthenticated(authenticated);
-        setIsLoading(false);
-      }, 100);
-    };
-
-    checkAuth();
-  }, []);
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -28,5 +13,6 @@ export default function IndexScreen() {
     );
   }
 
-  return <Redirect href={isAuthenticated ? '/(protected)' : '/login'} />;
+  // ✅ Redirect to appropriate route based on authentication
+  return <Redirect href={isAuthenticated ? '/main/(tabs)' : '/auth'} />;
 }

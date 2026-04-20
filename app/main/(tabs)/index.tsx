@@ -4,16 +4,11 @@ import { HelloWave } from '@/src/components/hello-wave';
 import ParallaxScrollView from '@/src/components/parallax-scroll-view';
 import { ThemedText } from '@/src/components/themed-text';
 import { ThemedView } from '@/src/components/themed-view';
-import { authService } from '@/src/services/auth/authService';
-import { Link, router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useAuth } from '@/src/contexts/AuthContext';
+import { Link } from 'expo-router';
 
 export default function HomeScreen() {
-  const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
-
-  useEffect(() => {
-    setCurrentUser(authService.getCurrentUser());
-  }, []);
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
     Alert.alert(
@@ -24,10 +19,7 @@ export default function HomeScreen() {
         { 
           text: 'Logout', 
           style: 'destructive',
-          onPress: async () => {
-            await authService.logout();
-            router.replace('/login');
-          }
+          onPress: logout // ✅ AuthContext handles navigation
         }
       ]
     );
@@ -44,15 +36,15 @@ export default function HomeScreen() {
       }
       >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome {currentUser?.username}!</ThemedText>
+        <ThemedText type="title">Welcome {user?.username}!</ThemedText>
         <HelloWave />
       </ThemedView>
       
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">User Info</ThemedText>
-        <ThemedText>Username: {currentUser?.username}</ThemedText>
-        <ThemedText>Email: {currentUser?.email}</ThemedText>
-        <ThemedText>User ID: {currentUser?.id}</ThemedText>
+        <ThemedText>Username: {user?.username}</ThemedText>
+        <ThemedText>Email: {user?.email}</ThemedText>
+        <ThemedText>User ID: {user?.id}</ThemedText>
       </ThemedView>
 
       <ThemedView style={styles.stepContainer}>
