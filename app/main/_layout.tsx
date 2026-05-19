@@ -1,10 +1,10 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { router, Stack } from 'expo-router';
-import { useEffect } from 'react';
+import { Redirect, Stack } from 'expo-router';
 import 'react-native-reanimated';
 
+import { useAuth } from '@/src/contexts/AuthContext';
 import { useColorScheme } from '@/src/hooks/use-color-scheme';
-import { authService } from '@/src/services/auth/authService';
+import { ActivityIndicator, View } from 'react-native';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -12,13 +12,21 @@ export const unstable_settings = {
 
 export default function ProtectedLayout() {
   const colorScheme = useColorScheme();
+  const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    // Redirect to login if not authenticated
-    if (!authService.isAuthenticated()) {
-      router.replace('/login');
-    }
-  }, []);
+  // Show loading spinner while checking auth status
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  // ✅ Redirect unauthenticated users to auth screen
+  if (!isAuthenticated) {
+    return <Redirect href="/auth" />;
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
